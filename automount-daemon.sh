@@ -119,23 +119,6 @@ _port="${port:-}"
 _host_user=$(id -un)
 _host_group=$(id -gn)
 
-# Handle custom port
-if [[ -n "${_port}" ]]; then
-    case "${_protocol}" in
-        smb|nfs|sftp)
-            if [[ -n "${_options}" ]]; then
-                _options="${_options},port=${_port}"
-            else
-                _options="port=${_port}"
-            fi
-            log "debug" "Applied custom port ${_port} to mount options"
-            ;;
-        ftp)
-            log "warn" "Port variable is set but not directly supported for FTP protocol in this script. Please include the port in the remote_path (e.g., ftp://host:port/path)."
-            ;;
-    esac
-fi
-
 # --- Dependency Check ---
 check_dependencies() {
     local missing=()
@@ -166,22 +149,28 @@ do_mount() {
 
     local mount_cmd=""
     local opts_flag=""
-    [[ -n "${_options}" ]] && opts_flag="-o ${_options}"
+    local port_opts=""
 
+    # Build protocol-specific port and option flags
     case "${_protocol}" in
         smb)
-            mount_cmd="sudo /usr/bin/mount -t cifs ${_remote_path} ${_mount_point} ${opts_flag}"
+            [[ -n "${_port}" ]] && port_opts=",port=${_port}"
+            mount_cmd="sudo /usr/bin/mount -t cifs ${_remote_path} ${_mount_point} -o ${_options}${port_opts}"
             ;;
         nfs)
-            mount_cmd="sudo /usr/bin/mount -t nfs ${_remote_path} ${_mount_point} ${opts_flag}"
+            [[ -n "${_port}" ]] && port_opts=",port=${_port}"
+            mount_cmd="sudo /usr/bin/mount -t nfs ${_remote_path} ${_mount_point} -o ${_options}${port_opts}"
             ;;
         ftp)
-            # FUSE mounts don't need sudo if user_allow_other is set and folder is owned by user
+            [[ -n "${_options}" ]] && opts_flag="-o ${_options}"
+            [[ -n "${_port}" ]] && log "warn" "Port ${_port} specified, but for FTP please include it in remote_path (ftp://host:port/path)"
             mount_cmd="/usr/bin/curlftpfs ${_remote_path} ${_mount_point} ${opts_flag}"
             ;;
         sftp)
-            # FUSE mounts don't need sudo if user_allow_other is set and folder is owned by user
-            mount_cmd="/usr/bin/sshfs ${_remote_path} ${_mount_point} ${opts_flag}"
+            [[ -n "${_options}" ]] && opts_flag="-o ${_options}"
+            local port_flag=""
+            [[ -n "${_port}" ]] && port_flag="-p ${_port}"
+            mount_cmd="/usr/bin/sshfs ${_remote_path} ${_mount_point} ${port_flag} ${opts_flag}"
             ;;
     esac
 
