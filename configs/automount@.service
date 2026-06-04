@@ -1,0 +1,18 @@
+[Unit]
+Description=Automount daemon for %i
+After=network-online.target remote-fs.target
+Wants=network-online.target
+
+[Service]
+User=automounter
+Group=automounter
+Type=simple
+ExecStart=/usr/local/sbin/automount-daemon.sh %i
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=automount-%i
+
+[Install]
+WantedBy=multi-user.target

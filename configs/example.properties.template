@@ -1,0 +1,28 @@
+# Copy this file to /etc/automount/config.d/<hostname>.properties and edit
+
+# protocol=smb
+# remote_path=//server/share
+# mount_point=/mnt/automount/nas1_smb
+# # Use a per-host credentials file for better security:
+# options=credentials=/etc/automount/credentials/nas1.creds,uid=1001,gid=1001,vers=3.0
+
+# protocol=nfs
+# remote_path=server:/export
+# mount_point=/mnt/automount/nas1_nfs
+# options=rw,soft,intr
+
+# protocol=ftp
+# remote_path=ftp://user:password@host/path
+# mount_point=/mnt/automount/nas1_ftp
+# options=allow_other,uid=1001
+
+# protocol=sftp
+# remote_path=user@host:/remote
+# mount_point=/mnt/automount/nas1_sftp
+# # You can specify a per-host SSH key here
+# options=allow_other,IdentityFile=/var/lib/automount/.ssh/id_rsa_nas1,StrictHostKeyChecking=no,uid=1001,gid=1001
+
+# Optional overrides
+# retry_max=3
+# retry_sleep=2
+# folder_chmod=770  # Default is 770 (rwxrwx---). Use 750 or 700 for more restriction.

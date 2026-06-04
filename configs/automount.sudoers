@@ -1,0 +1,1 @@
+automounter ALL=(ALL) NOPASSWD: /usr/bin/mount, /usr/bin/umount, /usr/bin/mkdir, /usr/bin/curlftpfs, /usr/bin/sshfs, /usr/bin/chown, /usr/bin/chmod
