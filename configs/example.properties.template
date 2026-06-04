@@ -23,6 +23,7 @@
 # options=allow_other,IdentityFile=/var/lib/automount/.ssh/id_rsa_nas1,StrictHostKeyChecking=no,uid=1001,gid=1001
 
 # Optional overrides
+# port=2222
 # retry_max=3
 # retry_sleep=2
 # folder_chmod=770  # Default is 770 (rwxrwx---). Use 750 or 700 for more restriction.

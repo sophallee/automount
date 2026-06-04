@@ -115,8 +115,26 @@ _options="${options:-}"
 _retry_max="${retry_max:-$default_retry_max}"
 _retry_sleep="${retry_sleep:-$default_retry_sleep}"
 _folder_chmod="${folder_chmod:-770}"
+_port="${port:-}"
 _host_user=$(id -un)
 _host_group=$(id -gn)
+
+# Handle custom port
+if [[ -n "${_port}" ]]; then
+    case "${_protocol}" in
+        smb|nfs|sftp)
+            if [[ -n "${_options}" ]]; then
+                _options="${_options},port=${_port}"
+            else
+                _options="port=${_port}"
+            fi
+            log "debug" "Applied custom port ${_port} to mount options"
+            ;;
+        ftp)
+            log "warn" "Port variable is set but not directly supported for FTP protocol in this script. Please include the port in the remote_path (e.g., ftp://host:port/path)."
+            ;;
+    esac
+fi
 
 # --- Dependency Check ---
 check_dependencies() {

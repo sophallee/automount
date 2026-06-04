@@ -40,13 +40,13 @@ Global settings are located in `/etc/automount/automount.conf`.
 
 ### Per-Host Configuration
 Create a `.properties` file for each host in `/etc/automount/config.d/`.
-
 #### Example: `nas1.properties`
 ```bash
 protocol=smb
 remote_path=//192.168.1.100/data
 mount_point=/mnt/automount/nas1
 options=credentials=/etc/automount/credentials/nas1.creds,uid=1001,gid=1001,vers=3.0
+port=4445          # Optional: Specify a custom port
 folder_chmod=770   # Optional: defaults to 770 (rwxrwx---)
 ```
 
@@ -78,7 +78,13 @@ Common values:
 
 ## Usage
 
+### Custom Ports
+You can specify a custom port using the `port` variable in your properties file.
+- **SMB/NFS/SFTP:** The daemon automatically appends `port=<port>` to the mount options.
+- **FTP:** The `port` variable is not directly supported by `curlftpfs`. Please include it in the `remote_path` (e.g., `ftp://host:2121/path`).
+
 ### Per-Host Credentials
+...
 Credentials (passwords and keys) are **always per-host**. 
 
 1. **SMB/CIFS Credentials:**
